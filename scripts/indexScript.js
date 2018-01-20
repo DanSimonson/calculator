@@ -25,9 +25,12 @@ $(document).ready(function(){
         // Now, just append the key values (btnValue) to the input string and finally use javascript's eval function to get the result
         
         var screenInput = document.getElementById('screen');
-        var operators = ['+', '-', '*', '/'];
+        var operators = ['+', '-', '*', '/','**','%'];
         
         switch (btnValue){
+            case 'CE':
+                screenInput.value = '';
+                break;
             case 'C':
                 screenInput.value = '';
                 break;
