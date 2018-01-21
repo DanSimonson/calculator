@@ -2,30 +2,125 @@
 $(document).ready(function(){
 
     var theParent = document.querySelector("#calculator");
-    theParent.addEventListener("click", getButton, false);
+	theParent.addEventListener("click", getButton, false);
+	var equation = []
     //var input = document.getElementById("screen");
      
     function getButton(e) {
-        if (e.target !== e.currentTarget) {
-
-            //alert("Hello " + clickedItem);
-            //alert("hello" + clickedValue);            
-            //var clickedItem = e.target.id;
-            //get value for clicked button
-            var clickedValue = e.target.value; 
-            var total = checkInput(clickedValue);
-            //create variable to hold screen input
-           
+        if (e.target !== e.currentTarget) {           
+            
+			//get value for clicked button
+			var btnID = e.target.id;
+            var btnValue = e.target.value; 
+            //var total = checkInput(clickedValue);
+			//create variable to hold screen input
+			var screenInput = document.getElementById('screen');
+			e.stopPropagation();
+			var operators = ['+', '-', '*', '/','**','%'];	
+			var lastChar = screenInput.value.substring(screenInput.value.length - 1);
+			var operatorFound = false;
+			equation.push(btnValue);
+			//console.log(equation);
+			
+			switch (btnValue){
+				case 'CE':
+					screenInput.value = '';
+					break;
+				case 'C':
+					screenInput.value = '';
+					break;
+				case 'backspace':
+					screenInput.value = btnValue.slice(0, -1);
+					break;
+				case '=':
+					// Final thing left to do is checking the last characters of the equation. If it is an operator or a decimal, remove it
+					// Get the last character from the equation
+					//var lastChar = screenInput[inputVal.length - 1];
+					//var equation = btnValue; 
+					//var lastChar = screenInput.value.substring(screenInput.value.length - 1);               
+					//if(operators.indexOf(lastChar) > -1 || lastChar == '.'){
+						//screenInput.value = screenInput.value.slice(0, -1);
+					//}
+						//screenInput.value = screenInput.value.slice(0, -1);
+					if(screenInput.value.length === 0) {
+						if(btnValue === '=') {
+							//= sign not allowed as first value
+							equation.pop();
+							break;
+						}
+					}
+							
+					if(equation) {
+						screenInput.value = eval(screenInput.value);
+					}     
+				break;
+				default:			
+						//--------------------
+						//Check for operators
+						//--------------------					
+						for(i = 0; i < operators.length; i++){
+							if(btnValue === operators[i]){
+								operatorFound = true;
+							}
+	
+						}
+						//----------------------------------------------------------------------------------------------------------------
+						//Add button input to screen if it is empty and the input is not an operator with the exceptin being a minu symbol
+						//----------------------------------------------------------------------------------------------------------------
+						if(screenInput.value.length === 0) {
+								if(btnValue === '-'){
+									//add if minus found
+									screenInput.value += btnValue;
+									//equation.push(btnValue);
+									break;
+								}
+								else if(operatorFound === false){
+									//add if no other operators found
+									screenInput.value += btnValue;
+									//equation.push(btnValue);
+									break;
+								}else {
+									//an operator is found so pop off value of our array
+									equation.pop();
+									break;
+								}														
+												
+						}
+						//-------------------------------------------------------------------------------
+						// if more than one value, do not allow entries for operators or '.' to be added consecutively
+						//-------------------------------------------------------------------------------
+						if(equation.length > 1){
+							var indexLast = equation.length - 1;
+							var indexBeforeLast = equation.length - 2;
+							if(equation[indexLast] === equation[indexBeforeLast] && equation[indexLast] === '.') {
+								//two consecutive dots not allowed
+								equation.pop();
+								break;
+							}
+							if(equation[indexLast] === equation[indexBeforeLast] && operatorFound == true) {
+								//two consecutive operators not allowed
+								equation.pop();
+								break;
+							}else {
+								//no rules broken so add value
+								screenInput.value += btnValue;
+								break;
+							}
+						}	
+					}  
             
         }
-        e.stopPropagation();
+        
     }
 
     function checkInput(btnValue) {
         // Now, just append the key values (btnValue) to the input string and finally use javascript's eval function to get the result
         
         var screenInput = document.getElementById('screen');
-        var operators = ['+', '-', '*', '/','**','%'];
+		var operators = ['+', '-', '*', '/','**','%'];	
+		var lastChar = screenInput.value.substring(screenInput.value.length - 1);
+		var operatorFound = false;
+		var equation = []
         
         switch (btnValue){
             case 'CE':
@@ -38,28 +133,97 @@ $(document).ready(function(){
                 screenInput.value = btnValue.slice(0, -1);
                 break;
             case '=':
-                // Final thing left to do is checking the last character of the equation. If it's an operator or a decimal, remove it
+                // Final thing left to do is checking the last characters of the equation. If it is an operator or a decimal, remove it
                 // Get the last character from the equation
-			    //var lastChar = screenInput[inputVal.length - 1];
-                var equation = screenInput; 
-                var lastChar = equation.value.substring(equation.value.length - 1);               
-			    if(operators.indexOf(lastChar) > -1 || lastChar == '.'){
+                //var lastChar = screenInput[inputVal.length - 1];
+                //var equation = btnValue; 
+                var lastChar = screenInput.value.substring(screenInput.value.length - 1);               
+				if(operators.indexOf(lastChar) > -1 || lastChar == '.'){
                     screenInput.value = screenInput.value.slice(0, -1);
-                }        
+                }
+                    //screenInput.value = screenInput.value.slice(0, -1);
+                        
                 if(equation) {
-                    screenInput.value = eval(screenInput.value);
-                    //screenInput.value = eval(equation.value);
-                }       
+                	screenInput.value = eval(screenInput.value);
+				}     
             break;
-            default:
-                screenInput.value += btnValue;
-        }  
-        //scrnValue.innerHTML += scrnValue;
-    }  
+			default:			
+					//--------------------
+					//Check for operators
+					//--------------------					
+					for(i = 0; i < operators.length; i++){
+						if(btnValue === operators[i]){
+							operatorFound = true;
+						}
+
+					}
+					//----------------------------------------------------------------------------------------------------------------
+					//Add button input to screen if it is empty and the input is not an operator with the exceptin being a minu symbol
+					//----------------------------------------------------------------------------------------------------------------
+					if(screenInput.value.length === 0) {
+							if(btnValue === '-'){
+								//add if minus found
+								screenInput.value += btnValue;
+								equation.push(btnValue);
+								break;
+							}
+							else if(operatorFound === false){
+								//add if no other operators found
+								screenInput.value += btnValue;
+								equation.push(btnValue);
+								console.log(equation);
+								break;
+							}														
+											
+					}
+					//-------------------------------------------------------------------------------
+					// do not allow entries except operators and '.' added consecutively
+					//-------------------------------------------------------------------------------
+					screenInput.value += btnValue;
+					equation.push(btnValue);
+					console.log(equation);
+
+				}
+        }//end check input  
 })
+					// Only add operator if the input is not empty and there is no operator at the last
+					//if(screenInput.value != '' && operators.indexOf(lastChar) == -1) {
+						//screenInput.value += btnValue;
+					//}
+					
+					// Only add operator if input is not empty and there is no operator at the last
+					//if(screenInput.value != '' && operators.indexOf(lastChar) == -1) {
+						//screenInput.value += btnValue;
+					//}
+					// Allow minus if the string is empty
+					//else if(screenInput.value == '' && btnValue == '-') {
+						//screenInput.value += btnValue;
+					//}
+					// Replace the last operator (if exists) with the newly pressed operator
+					//if(operators.indexOf(lastChar) > -1 && screenInput.value.length > 1) {
+						// Here, '.' matches any character while $ denotes the end of string, so anything 
+						//(will be an operator in this case) at the end of string will get replaced by new operator
+						//screenInput.value = screenInput.replace(/.$/, btnValue);
+					//}							
 
 /*
-
+// Operator is clicked
+			// Get the last character from the equation
+			var lastChar = inputVal[inputVal.length - 1];
+			
+			// Only add operator if input is not empty and there is no operator at the last
+			if(inputVal != '' && operators.indexOf(lastChar) == -1) 
+				input.innerHTML += btnVal;
+			
+			// Allow minus if the string is empty
+			else if(inputVal == '' && btnVal == '-') 
+				input.innerHTML += btnVal;
+			
+			// Replace the last operator (if exists) with the newly pressed operator
+			if(operators.indexOf(lastChar) > -1 && inputVal.length > 1) {
+				// Here, '.' matches any character while $ denotes the end of string, so anything (will be an operator in this case) at the end of string will get replaced by new operator
+				input.innerHTML = inputVal.replace(/.$/, btnVal);
+			}
 // Get all the keys from document
 var keys = document.querySelectorAll('#calculator span');
 var operators = ['+', '-', 'x', '÷'];
