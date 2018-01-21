@@ -1,26 +1,27 @@
 
 $(document).ready(function(){
-
+	//get parent div to listen for events through event propigation
     var theParent = document.querySelector("#calculator");
 	theParent.addEventListener("click", getButton, false);
+	//the persistent array holding the equation values and length
 	var equation = []
-    //var input = document.getElementById("screen");
      
     function getButton(e) {
         if (e.target !== e.currentTarget) {           
             
-			//get value for clicked button
+			//get value and id for clicked button
 			var btnID = e.target.id;
             var btnValue = e.target.value; 
-            //var total = checkInput(clickedValue);
 			//create variable to hold screen input
 			var screenInput = document.getElementById('screen');
+			//stop event listener propigation since it is no longer needed
 			e.stopPropagation();
+			//arrays and variables used for calculations
 			var operators = ['+', '-', '*', '/','**','%'];	
 			var lastChar = screenInput.value.substring(screenInput.value.length - 1);
 			var operatorFound = false;
+			//array holding the equation that get the clicked button value
 			equation.push(btnValue);
-			//console.log(equation);
 			
 			switch (btnValue){
 				case 'CE':
@@ -33,15 +34,9 @@ $(document).ready(function(){
 					screenInput.value = btnValue.slice(0, -1);
 					break;
 				case '=':
-					// Final thing left to do is checking the last characters of the equation. If it is an operator or a decimal, remove it
-					// Get the last character from the equation
-					//var lastChar = screenInput[inputVal.length - 1];
-					//var equation = btnValue; 
-					//var lastChar = screenInput.value.substring(screenInput.value.length - 1);               
-					//if(operators.indexOf(lastChar) > -1 || lastChar == '.'){
-						//screenInput.value = screenInput.value.slice(0, -1);
-					//}
-						//screenInput.value = screenInput.value.slice(0, -1);
+					//------------------------------------------------------------------------------------------------------
+					// if = clicked check if no input yet since that is an illegal math operation, else evaluate the eqution
+					//------------------------------------------------------------------------------------------------------					
 					if(screenInput.value.length === 0) {
 						if(btnValue === '=') {
 							//= sign not allowed as first value
@@ -53,7 +48,7 @@ $(document).ready(function(){
 					if(equation) {
 						screenInput.value = eval(screenInput.value);
 					}     
-				break;
+					break;
 				default:			
 						//--------------------
 						//Check for operators
@@ -64,23 +59,21 @@ $(document).ready(function(){
 							}
 	
 						}
-						//----------------------------------------------------------------------------------------------------------------
-						//Add button input to screen if it is empty and the input is not an operator with the exceptin being a minu symbol
-						//----------------------------------------------------------------------------------------------------------------
+						//-----------------------------------------------------------------------------------------------------------------
+						//Add button input to screen if it is empty and the input is not an operator with the exceptin being a minus symbol
+						//-----------------------------------------------------------------------------------------------------------------
 						if(screenInput.value.length === 0) {
 								if(btnValue === '-'){
 									//add if minus found
 									screenInput.value += btnValue;
-									//equation.push(btnValue);
 									break;
 								}
 								else if(operatorFound === false){
 									//add if no other operators found
 									screenInput.value += btnValue;
-									//equation.push(btnValue);
 									break;
 								}else {
-									//an operator is found so pop off value of our array
+									//an operator is found so pop off value from end of our array
 									equation.pop();
 									break;
 								}														
@@ -111,7 +104,13 @@ $(document).ready(function(){
             
         }
         
-    }
+	}
+
+})
+
+/*------------------------------------------------------------------------------------------------------------------------------------
+---------------------------- old code not used ---------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
 
     function checkInput(btnValue) {
         // Now, just append the key values (btnValue) to the input string and finally use javascript's eval function to get the result
@@ -204,31 +203,13 @@ $(document).ready(function(){
 						// Here, '.' matches any character while $ denotes the end of string, so anything 
 						//(will be an operator in this case) at the end of string will get replaced by new operator
 						//screenInput.value = screenInput.replace(/.$/, btnValue);
-					//}							
+					//}	
+/*						
 
-/*
-// Operator is clicked
-			// Get the last character from the equation
-			var lastChar = inputVal[inputVal.length - 1];
-			
-			// Only add operator if input is not empty and there is no operator at the last
-			if(inputVal != '' && operators.indexOf(lastChar) == -1) 
-				input.innerHTML += btnVal;
-			
-			// Allow minus if the string is empty
-			else if(inputVal == '' && btnVal == '-') 
-				input.innerHTML += btnVal;
-			
-			// Replace the last operator (if exists) with the newly pressed operator
-			if(operators.indexOf(lastChar) > -1 && inputVal.length > 1) {
-				// Here, '.' matches any character while $ denotes the end of string, so anything (will be an operator in this case) at the end of string will get replaced by new operator
-				input.innerHTML = inputVal.replace(/.$/, btnVal);
-			}
 // Get all the keys from document
 var keys = document.querySelectorAll('#calculator span');
 var operators = ['+', '-', 'x', '÷'];
 var decimalAdded = false;
-
 // Add onclick event to all the keys and perform operations
 for(var i = 0; i < keys.length; i++) {
 	keys[i].onclick = function(e) {
@@ -310,6 +291,7 @@ for(var i = 0; i < keys.length; i++) {
 	} 
 }
 */
+
 
 
 
